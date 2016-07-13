@@ -201,7 +201,7 @@
 				<ul>
 					<li class="fragment" data-fragment-index="1">Docker is several tools really:
 						<ul>
-							<li class="fragment" data-fragment-index="2">Docker Engine</li>
+							<li class="fragment" data-fragment-index="2">Docker Engine, deamon</li>
 							<li class="fragment" data-fragment-index="3">Docker Client (<code>docker</code>)</li>
 							<li class="fragment" data-fragment-index="4">Docker Registry</li>
 							<li class="fragment" data-fragment-index="5">Docker Machine (<code>docker-machine</code>)</li>
@@ -214,13 +214,12 @@
 			<section>
 				<h1>docker-machine</h1>
 				<pre><code>docker-machine ls
-docker-machine create --driver virtualbox demo
-docker-machine start demo
-docker-machine ip demo
+# docker-machine create --driver virtualbox default
+docker-machine start default
+docker-machine ip default
 docker version
-eval $(docker-machine env demo)
+eval $(docker-machine env)
 docker version
-docker -v
 docker info
 docker-machine ssh default
 </code></pre>
@@ -238,10 +237,10 @@ docker rmi hello-world
 			<section>
 				<h1>Docker Registry</h1>
 				<p>
-					<a href="https://hub.docker.com/explore/">https://hub.docker.com/explore/</a>
+					<a target="_blank" href="https://hub.docker.com/explore/">https://hub.docker.com/explore/</a>
 				</p>
 				<p>
-					<a href="https://repository.prod.aws.skyscnr.com/artifactory/webapp/">
+					<a target="_blank" href="https://repository.prod.aws.skyscnr.com/artifactory/webapp/">
 					https://repository.prod.aws.skyscnr.com/artifactory/webapp/</a>
 				</p>
 				<pre><code>docker search ubuntu
@@ -254,15 +253,23 @@ docker login registry.prod.aws.skyscnr.com
 
 			<section>
 				<h1>Containers</h1>
-				<pre><code>docker run hello-world
-docker run -it ubuntu:16.04
-# ctrl + P + Q - exit docker session (but leave the container running)
-docker ps
-docker attach [id or name]
-docker run -d ubuntu /bin/bash -c "ping 8.8.8.8 -c 30"
-docker logs [id]
-docker ps
+				<pre><code>docker ps
+docker create hello-world
 docker ps -a
+docker start &lt;container id&gt;
+docker ps -a
+docker logs &lt;container id&gt;
+docker rm &lt;container id&gt;
+
+docker run hello-world
+
+docker run -i -t ubuntu:16.04 # interactive, allocate tty
+# ctrl + P + Q - exit docker session (but leave the container running)
+docker attach &lt;container id&gt;
+docker stop &lt;container id&gt;
+
+docker run -d ubuntu /bin/bash -c "ping 8.8.8.8 -c 30" # run detached, start command
+docker logs &lt;container id&gt;
 </code></pre>
 			</section>
 
@@ -274,21 +281,22 @@ COPY . /usr/local/mshell
 WORKDIR /usr/local/mshell
 CMD java -jar build/libs/microservice-shell-java.jar server microservice.yml
 </code></pre>
-				<pre><code>docker build -t "hello-skyscanner" .</code></pre>
+				<pre><code>docker build -t "mshell-service:1.0.0" .</code></pre>
 			</section>
 
 			<section>
-				<h1>Excercise</h1>
+				<h1>Dockerfile examle 2</h1>
 				<p>
 					Write a Dockerfile which will create an image running a simple web server which will display a static index.html file.
 				</p>
-			</section>
-			<!--
-FROM nginx
+				<pre><code>FROM nginx
 
 COPY index.html /usr/share/nginx/html/
--->
-
+</code></pre>
+				<pre><code>docker build -t "static-page:1.0.0" .
+docker images
+docker run -p 80:8000 static-page:1.0.0</code></pre>
+			</section>
 
 			<section>
 				<h1>docker-compose</h1>
@@ -313,7 +321,7 @@ services:
 			<section>
 				<h1>Excercise with docker-compose</h1>
 				<p>
-					Download https://github.com/docker/example-voting-app and run it locally.
+					Download <a href="https://github.com/docker/example-voting-app">https://github.com/docker/example-voting-app</a> and run it locally.
 				</p>
 			</section>
 
